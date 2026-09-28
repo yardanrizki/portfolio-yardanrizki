@@ -1,159 +1,130 @@
-"use client";import {
-  ExternalLink,
-  Tag,
-  X,
-  ShoppingCart,
-  Eye,
-  Calendar,
-  Users,
-  Code2,
-} from "lucide-react";
+"use client";
+import { ExternalLink, Tag, X, ShoppingCart, Eye, Code2 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import { useTheme } from "../app/contexts/ThemeContext";
 import { useLanguage } from "../app/contexts/LanguageContext";
 import OrderModal from "./OrderModal";
 
-const projects = [
-  {
-    title: "AI-Powered Analytics Dashboard",
-    description: "Real-time analytics platform with machine learning predictions and beautiful data visualizations.",
-    longDescription: "A comprehensive analytics solution that leverages machine learning algorithms to provide predictive insights. Features include real-time data processing, customizable dashboards, automated reporting, and AI-driven recommendations for business optimization.",
-    categories: ["AI"], // Only AI
-    tags: ["Machine Learning", "React", "Python"],
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800",
-    link: "#",
-    price: "$2,500",
-    duration: "4-6 weeks",
-    team: "3-4 developers",
-    features: ["Real-time Analytics", "ML Predictions", "Custom Dashboards", "API Integration"]
-  },
-  {
-    title: "E-Commerce Platform",
-    description: "Full-stack e-commerce solution with payment integration, inventory management, and admin dashboard.",
-    longDescription: "Modern e-commerce platform built with scalability in mind. Includes secure payment processing, real-time inventory tracking, advanced search and filtering, customer management, and comprehensive admin panel for complete store control.",
-    categories: ["Web Dev"], // Only Web Dev
-    tags: ["React", "Node.js", "MongoDB"],
-    image: "https://images.unsplash.com/photo-1557821552-17105176677c?w=800",
-    link: "#",
-    price: "$3,500",
-    duration: "6-8 weeks",
-    team: "4-5 developers",
-    features: ["Payment Gateway", "Inventory System", "Admin Dashboard", "Customer Portal"]
-  },
-  {
-    title: "Neural Network Visualizer",
-    description: "Interactive tool for visualizing and understanding neural network architectures and training processes.",
-    longDescription: "Educational and research tool that makes neural networks transparent and understandable. Visualize layer architectures, activation functions, training progress, and model performance in real-time with interactive 3D representations.",
-    categories: ["AI"], // Only AI
-    tags: ["TensorFlow", "D3.js", "Python"],
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800",
-    link: "#",
-    price: "$1,800",
-    duration: "3-4 weeks",
-    team: "2-3 developers",
-    features: ["3D Visualization", "Real-time Training", "Model Comparison", "Export Results"]
-  },
-  {
-    title: "Smart Task Management System",
-    description: "AI-enhanced project management tool with real-time collaboration and intelligent task prioritization.",
-    longDescription: "Enterprise-grade project management solution with AI-powered task prioritization, real-time collaboration, time management, resource allocation, and integrated team communication. The AI analyzes team patterns and suggests optimal workflows.",
-    categories: ["Web Dev", "AI"], // Both categories!
-    tags: ["React", "WebSocket", "Machine Learning", "PostgreSQL"],
-    image: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800",
-    link: "#",
-    price: "$3,200",
-    duration: "5-7 weeks",
-    team: "4 developers",
-    features: ["AI Task Prioritization", "Real-time Updates", "Team Chat", "Smart Scheduling"]
-  },
-  {
-    title: "Natural Language Processor",
-    description: "Advanced NLP system for sentiment analysis, entity recognition, and text summarization.",
-    longDescription: "State-of-the-art NLP solution powered by transformer models. Processes and analyzes text at scale with high accuracy for sentiment analysis, named entity recognition, text classification, and automatic summarization.",
-    categories: ["AI"], // Only AI
-    tags: ["NLP", "BERT", "FastAPI"],
-    image: "https://images.unsplash.com/photo-1555255707-c07966088b7b?w=800",
-    link: "#",
-    price: "$3,000",
-    duration: "5-7 weeks",
-    team: "3-4 developers",
-    features: ["Sentiment Analysis", "Entity Recognition", "Text Summarization", "Multi-language Support"]
-  },
-  {
-    title: "Portfolio CMS",
-    description: "Custom content management system for creative professionals with drag-and-drop interface.",
-    longDescription: "Beautiful and intuitive CMS designed specifically for creative professionals. Features drag-and-drop page builder, media management, SEO optimization, responsive templates, and easy customization without coding.",
-    categories: ["Web Dev"], // Only Web Dev
-    tags: ["Next.js", "Tailwind", "Supabase"],
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800",
-    link: "#",
-    price: "$1,500",
-    duration: "3-4 weeks",
-    team: "2 developers",
-    features: ["Drag & Drop Builder", "Media Management", "SEO Tools", "Custom Templates"]
-  },
-  {
-    title: "AI Content Generator Platform",
-    description: "Web-based AI platform for generating marketing content, social media posts, and blog articles.",
-    longDescription: "Revolutionary content generation platform powered by advanced language models. Create high-quality marketing copy, social media content, blog posts, and product descriptions in seconds. Includes SEO optimization and brand voice customization.",
-    categories: ["Web Dev", "AI"], // Both categories!
-    tags: ["React", "GPT-4", "Node.js", "MongoDB"],
-    image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800",
-    link: "#",
-    price: "$4,200",
-    duration: "6-8 weeks",
-    team: "4-5 developers",
-    features: ["AI Content Generation", "SEO Optimization", "Brand Voice Training", "Multi-format Export"]
-  },
-  {
-    title: "Intelligent Chatbot Builder",
-    description: "No-code platform for building AI-powered chatbots with natural language understanding.",
-    longDescription: "Complete chatbot development platform with visual flow builder and advanced AI capabilities. Train custom models, integrate with multiple channels, analyze conversations, and automate customer support without writing code.",
-    categories: ["Web Dev", "AI"], // Both categories!
-    tags: ["React", "NLP", "TensorFlow", "WebSocket"],
-    image: "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=800",
-    link: "#",
-    price: "$3,800",
-    duration: "5-7 weeks",
-    team: "4 developers",
-    features: ["Visual Flow Builder", "NLP Training", "Multi-channel Integration", "Analytics Dashboard"]
-  }
-];
+export type PortfolioProject = {
+  id: string;
+  titleEn: string;
+  titleId: string | null;
+  shortDescriptionEn: string | null;
+  shortDescriptionId: string | null;
+  longDescriptionEn: string | null;
+  longDescriptionId: string | null;
+  techStack: string[];
+  roleInProject: string | null;
+  status: string;
+  githubUrl: string | null;
+  demoUrl: string | null;
+  coverImageUrl: string | null;
+  imageUrls: string[];
+  profiles: {
+    profile: {
+      slug: string;
+      name: string;
+      roleLabel: string | null;
+    };
+  }[];
+};
 
-export default function Projects() {
+type NormalizedProject = PortfolioProject & {
+  categories: ("Web Dev" | "AI")[];
+  title: string;
+  description: string;
+  longDescription: string;
+  tags: string[];
+  image: string;
+  link: string;
+};
+
+type ProjectsProps = {
+  projects: PortfolioProject[];
+};
+
+export default function Projects({ projects }: ProjectsProps) {
   const [activeCategory, setActiveCategory] = useState("All");
-  const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
+  const [selectedProject, setSelectedProject] =
+    useState<NormalizedProject | null>(null);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  const [projectToOrder, setProjectToOrder] = useState<typeof projects[0] | null>(null);
+  const [projectToOrder, setProjectToOrder] =
+    useState<NormalizedProject | null>(null);
   const { theme } = useTheme();
   const { t } = useLanguage();
 
   const categories = [t.projects.all, t.projects.webDev, t.projects.ai];
-  const categoryMap: Record<string, string> = {
+  const categoryMap: Record<string, "All" | "Web Dev" | "AI"> = {
     [t.projects.all]: "All",
     [t.projects.webDev]: "Web Dev",
-    [t.projects.ai]: "AI"
+    [t.projects.ai]: "AI",
   };
 
-  // Filter projects based on category - project can appear in multiple categories
-  const filteredProjects =
-    categoryMap[activeCategory] === "All"
-      ? projects
-      : projects.filter((p) => p.categories.includes(categoryMap[activeCategory]));
+  const normalizedProjects: NormalizedProject[] = projects.map((project) => {
+    const categories = project.profiles
+      .map(({ profile }) => {
+        if (
+          profile.slug === "software-web-development" ||
+          profile.roleLabel?.toLowerCase().includes("software") ||
+          profile.roleLabel?.toLowerCase().includes("web")
+        ) {
+          return "Web Dev";
+        }
 
-  const handleOrderNow = (project: typeof projects[0]) => {
+        if (
+          profile.slug === "ai-data-science" ||
+          profile.roleLabel?.toLowerCase().includes("ai") ||
+          profile.roleLabel?.toLowerCase().includes("data")
+        ) {
+          return "AI";
+        }
+
+        return null;
+      })
+      .filter((category): category is "Web Dev" | "AI" => category !== null);
+
+    return {
+      ...project,
+      categories: [...new Set(categories)],
+      title: project.titleEn,
+      description: project.shortDescriptionEn || "",
+      longDescription:
+        project.longDescriptionEn || project.shortDescriptionEn || "",
+      tags: project.techStack,
+      image:
+        project.coverImageUrl ||
+        project.imageUrls?.[0] ||
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800",
+      link: project.demoUrl || project.githubUrl || "#",
+    };
+  });
+
+  // Filter projects based on category - project can appear in multiple categories
+  const activeCategoryKey = categoryMap[activeCategory];
+
+  const filteredProjects =
+    activeCategoryKey === "All"
+      ? normalizedProjects
+      : normalizedProjects.filter((project) =>
+          project.categories.includes(activeCategoryKey)
+        );
+
+  const handleOrderNow = (project: NormalizedProject) => {
     setProjectToOrder(project);
     setSelectedProject(null);
     setIsOrderModalOpen(true);
   };
 
   return (
-    <section id="projects" className={`py-12 sm:py-20 px-4 sm:px-6 ${
-      theme === "dark"
-        ? "bg-gradient-to-b from-[#0A1520] to-[#050B12]"
-        : "bg-gradient-to-b from-white to-gray-50"
-    }`}>
+    <section
+      id="projects"
+      className={`py-12 sm:py-20 px-4 sm:px-6 ${
+        theme === "dark"
+          ? "bg-gradient-to-b from-[#0A1520] to-[#050B12]"
+          : "bg-gradient-to-b from-white to-gray-50"
+      }`}
+    >
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -163,13 +134,17 @@ export default function Projects() {
         >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
             {t.projects.title.split(" ")[0]}{" "}
-            <span className={theme === "dark" ? "text-[#00FFFF]" : "text-blue-600"}>
+            <span
+              className={theme === "dark" ? "text-[#00FFFF]" : "text-blue-600"}
+            >
               {t.projects.title.split(" ").slice(1).join(" ")}
             </span>
           </h2>
-          <p className={`text-base sm:text-lg ${
-            theme === "dark" ? "text-gray-400" : "text-gray-600"
-          }`}>
+          <p
+            className={`text-base sm:text-lg ${
+              theme === "dark" ? "text-gray-400" : "text-gray-600"
+            }`}
+          >
             {t.projects.subtitle}
           </p>
         </motion.div>
@@ -178,10 +153,12 @@ export default function Projects() {
         <div className="flex justify-center mb-12 flex-wrap gap-3 sm:gap-4">
           {categories.map((category) => {
             const categoryKey = categoryMap[category];
-            const count = categoryKey === "All" 
-              ? projects.length 
-              : projects.filter(p => p.categories.includes(categoryKey)).length;
-            
+            const count =
+              categoryKey === "All"
+                ? normalizedProjects.length
+                : normalizedProjects.filter((p) =>
+                    p.categories.includes(categoryKey)
+                  ).length;
             return (
               <motion.button
                 key={category}
@@ -194,20 +171,22 @@ export default function Projects() {
                       ? "bg-gradient-to-r from-[#00FFFF] to-[#00CCCC] text-[#050B12]"
                       : "bg-gradient-to-r from-blue-600 to-blue-700 text-white"
                     : theme === "dark"
-                    ? "bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:border-cyan-500/50"
-                    : "bg-white border border-gray-200 text-gray-600 hover:text-gray-900 hover:border-blue-300 shadow-sm"
+                      ? "bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:border-cyan-500/50"
+                      : "bg-white border border-gray-200 text-gray-600 hover:text-gray-900 hover:border-blue-300 shadow-sm"
                 }`}
               >
                 {category}
-                <span className={`px-2 py-0.5 rounded-full text-xs ${
-                  activeCategory === category
-                    ? theme === "dark"
-                      ? "bg-[#050B12]/30"
-                      : "bg-white/30"
-                    : theme === "dark"
-                    ? "bg-white/10"
-                    : "bg-gray-100"
-                }`}>
+                <span
+                  className={`px-2 py-0.5 rounded-full text-xs ${
+                    activeCategory === category
+                      ? theme === "dark"
+                        ? "bg-[#050B12]/30"
+                        : "bg-white/30"
+                      : theme === "dark"
+                        ? "bg-white/10"
+                        : "bg-gray-100"
+                  }`}
+                >
                   {count}
                 </span>
               </motion.button>
@@ -243,11 +222,13 @@ export default function Projects() {
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   {/* Overlay on Hover */}
-                  <div className={`absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
-                    theme === "dark"
-                      ? "bg-gradient-to-t from-[#050B12] via-[#050B12]/50 to-transparent"
-                      : "bg-gradient-to-t from-gray-900/80 via-gray-900/40 to-transparent"
-                  }`}>
+                  <div
+                    className={`absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
+                      theme === "dark"
+                        ? "bg-gradient-to-t from-[#050B12] via-[#050B12]/50 to-transparent"
+                        : "bg-gradient-to-t from-gray-900/80 via-gray-900/40 to-transparent"
+                    }`}
+                  >
                     <motion.button
                       onClick={() => setSelectedProject(project)}
                       whileHover={{ scale: 1.1 }}
@@ -277,8 +258,8 @@ export default function Projects() {
                               ? "bg-[#00FFFF]/20 text-[#00FFFF]"
                               : "bg-blue-100 text-blue-700"
                             : theme === "dark"
-                            ? "bg-[#FF8C00]/20 text-[#FF8C00]"
-                            : "bg-orange-100 text-orange-700"
+                              ? "bg-[#FF8C00]/20 text-[#FF8C00]"
+                              : "bg-orange-100 text-orange-700"
                         }`}
                       >
                         <Tag size={12} />
@@ -287,19 +268,16 @@ export default function Projects() {
                     ))}
                   </div>
 
-                  <h3 className="text-lg sm:text-xl font-bold mb-2">{project.title}</h3>
-                  <p className={`text-sm mb-4 line-clamp-2 ${
-                    theme === "dark" ? "text-gray-400" : "text-gray-600"
-                  }`}>
+                  <h3 className="text-lg sm:text-xl font-bold mb-2">
+                    {project.title}
+                  </h3>
+                  <p
+                    className={`text-sm mb-4 line-clamp-2 ${
+                      theme === "dark" ? "text-gray-400" : "text-gray-600"
+                    }`}
+                  >
                     {project.description}
                   </p>
-
-                  {/* Price Tag */}
-                  <div className={`text-xl font-bold mb-4 ${
-                    theme === "dark" ? "text-[#00FFFF]" : "text-blue-600"
-                  }`}>
-                    {project.price}
-                  </div>
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2">
@@ -316,9 +294,11 @@ export default function Projects() {
                       </span>
                     ))}
                     {project.tags.length > 3 && (
-                      <span className={`px-2 py-1 rounded-md text-xs ${
-                        theme === "dark" ? "text-gray-400" : "text-gray-600"
-                      }`}>
+                      <span
+                        className={`px-2 py-1 rounded-md text-xs ${
+                          theme === "dark" ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
                         +{project.tags.length - 3}
                       </span>
                     )}
@@ -370,11 +350,13 @@ export default function Projects() {
                   alt={selectedProject.title}
                   className="w-full h-full object-cover"
                 />
-                <div className={`absolute inset-0 bg-gradient-to-t ${
-                  theme === "dark"
-                    ? "from-[#0A1520] to-transparent"
-                    : "from-white to-transparent"
-                }`} />
+                <div
+                  className={`absolute inset-0 bg-gradient-to-t ${
+                    theme === "dark"
+                      ? "from-[#0A1520] to-transparent"
+                      : "from-white to-transparent"
+                  }`}
+                />
               </div>
 
               {/* Content */}
@@ -390,8 +372,8 @@ export default function Projects() {
                             ? "bg-[#00FFFF]/20 text-[#00FFFF]"
                             : "bg-blue-100 text-blue-700"
                           : theme === "dark"
-                          ? "bg-[#FF8C00]/20 text-[#FF8C00]"
-                          : "bg-orange-100 text-orange-700"
+                            ? "bg-[#FF8C00]/20 text-[#FF8C00]"
+                            : "bg-orange-100 text-orange-700"
                       }`}
                     >
                       <Tag size={14} />
@@ -400,82 +382,64 @@ export default function Projects() {
                   ))}
                 </div>
 
-                <h2 className="text-2xl sm:text-3xl font-bold mb-4">{selectedProject.title}</h2>
-                
-                <p className={`text-base mb-6 ${
-                  theme === "dark" ? "text-gray-300" : "text-gray-700"
-                }`}>
+                <h2 className="text-2xl sm:text-3xl font-bold mb-4">
+                  {selectedProject.title}
+                </h2>
+
+                <p
+                  className={`text-base mb-6 ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
                   {selectedProject.longDescription}
                 </p>
 
-                {/* Project Info Grid */}
-                <div className="grid sm:grid-cols-3 gap-4 mb-6">
-                  <div className={`p-4 rounded-xl border ${
-                    theme === "dark"
-                      ? "bg-white/5 border-white/10"
-                      : "bg-gray-50 border-gray-200"
-                  }`}>
-                    <div className={`text-2xl font-bold mb-1 ${
-                      theme === "dark" ? "text-[#00FFFF]" : "text-blue-600"
-                    }`}>
-                      {selectedProject.price}
+                {/* Project Info */}
+                <div className="grid sm:grid-cols-2 gap-4 mb-6">
+                  <div
+                    className={`p-4 rounded-xl border ${
+                      theme === "dark"
+                        ? "bg-white/5 border-white/10"
+                        : "bg-gray-50 border-gray-200"
+                    }`}
+                  >
+                    <div
+                      className={`text-sm mb-1 ${
+                        theme === "dark" ? "text-gray-400" : "text-gray-600"
+                      }`}
+                    >
+                      Role
                     </div>
-                    <div className={`text-sm ${
-                      theme === "dark" ? "text-gray-400" : "text-gray-600"
-                    }`}>
-                      Starting Price
-                    </div>
-                  </div>
-
-                  <div className={`p-4 rounded-xl border ${
-                    theme === "dark"
-                      ? "bg-white/5 border-white/10"
-                      : "bg-gray-50 border-gray-200"
-                  }`}>
-                    <div className={`flex items-center gap-2 mb-1 ${
-                      theme === "dark" ? "text-white" : "text-gray-900"
-                    }`}>
-                      <Calendar size={20} />
-                      <span className="font-bold">{selectedProject.duration}</span>
-                    </div>
-                    <div className={`text-sm ${
-                      theme === "dark" ? "text-gray-400" : "text-gray-600"
-                    }`}>
-                      Timeline
+                    <div
+                      className={`font-bold ${
+                        theme === "dark" ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      {selectedProject.roleInProject || "Developer"}
                     </div>
                   </div>
 
-                  <div className={`p-4 rounded-xl border ${
-                    theme === "dark"
-                      ? "bg-white/5 border-white/10"
-                      : "bg-gray-50 border-gray-200"
-                  }`}>
-                    <div className={`flex items-center gap-2 mb-1 ${
-                      theme === "dark" ? "text-white" : "text-gray-900"
-                    }`}>
-                      <Users size={20} />
-                      <span className="font-bold">{selectedProject.team}</span>
+                  <div
+                    className={`p-4 rounded-xl border ${
+                      theme === "dark"
+                        ? "bg-white/5 border-white/10"
+                        : "bg-gray-50 border-gray-200"
+                    }`}
+                  >
+                    <div
+                      className={`text-sm mb-1 ${
+                        theme === "dark" ? "text-gray-400" : "text-gray-600"
+                      }`}
+                    >
+                      Status
                     </div>
-                    <div className={`text-sm ${
-                      theme === "dark" ? "text-gray-400" : "text-gray-600"
-                    }`}>
-                      Team Size
+                    <div
+                      className={`font-bold ${
+                        theme === "dark" ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      {selectedProject.status.replaceAll("_", " ")}
                     </div>
-                  </div>
-                </div>
-
-                {/* Features */}
-                <div className="mb-6">
-                  <h3 className="text-xl font-bold mb-3">Key Features</h3>
-                  <div className="grid sm:grid-cols-2 gap-2">
-                    {selectedProject.features.map((feature, i) => (
-                      <div key={i} className={`flex items-center gap-2 ${
-                        theme === "dark" ? "text-gray-300" : "text-gray-700"
-                      }`}>
-                        <span className={theme === "dark" ? "text-[#00FFFF]" : "text-blue-600"}>✓</span>
-                        {feature}
-                      </div>
-                    ))}
                   </div>
                 </div>
 
@@ -506,14 +470,18 @@ export default function Projects() {
                     onClick={() => handleOrderNow(selectedProject)}
                     className="flex-1 sm:flex-none group relative px-6 py-3 rounded-lg overflow-hidden transition-all duration-300"
                   >
-                    <div className={`absolute inset-0 group-hover:scale-110 transition-transform ${
-                      theme === "dark"
-                        ? "bg-gradient-to-r from-[#00FFFF] to-[#00CCCC]"
-                        : "bg-gradient-to-r from-blue-600 to-blue-700"
-                    }`} />
-                    <div className={`relative flex items-center justify-center gap-2 font-semibold ${
-                      theme === "dark" ? "text-[#050B12]" : "text-white"
-                    }`}>
+                    <div
+                      className={`absolute inset-0 group-hover:scale-110 transition-transform ${
+                        theme === "dark"
+                          ? "bg-gradient-to-r from-[#00FFFF] to-[#00CCCC]"
+                          : "bg-gradient-to-r from-blue-600 to-blue-700"
+                      }`}
+                    />
+                    <div
+                      className={`relative flex items-center justify-center gap-2 font-semibold ${
+                        theme === "dark" ? "text-[#050B12]" : "text-white"
+                      }`}
+                    >
                       <ShoppingCart size={20} />
                       Order Now
                     </div>

@@ -1,36 +1,76 @@
+"use client";
+
 import { motion } from "motion/react";
 import { useTheme } from "../app/contexts/ThemeContext";
 import { useLanguage } from "../app/contexts/LanguageContext";
-import { Briefcase, FolderOpen, Award, Users } from "lucide-react";
+import { Briefcase, FolderOpen, Award } from "lucide-react";
 
-export default function Statistics() {
+export type PortfolioStatisticExperience = {
+  startDate: string;
+  isActive: boolean;
+};
+
+interface StatisticsProps {
+  experiences: PortfolioStatisticExperience[];
+  projectsCount: number;
+  certificationsCount: number;
+}
+
+function calculateYearsExperience(
+  experiences: PortfolioStatisticExperience[]
+) {
+  const activeExperiences = experiences.filter(
+    (experience) => experience.isActive
+  );
+
+  if (activeExperiences.length === 0) {
+    return "0+";
+  }
+
+  const earliestStart = activeExperiences.reduce(
+    (earliest, experience) => {
+      const start = new Date(experience.startDate);
+
+      return start < earliest ? start : earliest;
+    },
+    new Date(activeExperiences[0].startDate)
+  );
+
+  const now = new Date();
+
+  const years =
+    (now.getTime() - earliestStart.getTime()) /
+    (1000 * 60 * 60 * 24 * 365.25);
+
+  return `${Math.max(0, Math.floor(years))}+`;
+}
+
+export default function Statistics({
+  experiences,
+  projectsCount,
+  certificationsCount,
+}: StatisticsProps) {
   const { theme } = useTheme();
   const { t } = useLanguage();
 
   const stats = [
     {
       icon: Briefcase,
-      value: "5+",
+      value: calculateYearsExperience(experiences),
       label: t.statistics.yearsExperience,
       color: theme === "dark" ? "#00FFFF" : "#2563eb",
     },
     {
       icon: FolderOpen,
-      value: "50+",
+      value: `${projectsCount}+`,
       label: t.statistics.projectsCompleted,
       color: theme === "dark" ? "#FF8C00" : "#f97316",
     },
     {
       icon: Award,
-      value: "20+",
+      value: `${certificationsCount}+`,
       label: t.statistics.certifications,
       color: theme === "dark" ? "#00FFFF" : "#2563eb",
-    },
-    {
-      icon: Users,
-      value: "30+",
-      label: t.statistics.happyClients,
-      color: theme === "dark" ? "#FF8C00" : "#f97316",
     },
   ];
 
@@ -49,7 +89,7 @@ export default function Statistics() {
     >
       <div className="max-w-7xl mx-auto">
         {/* Statistics Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 max-w-5xl mx-auto">
           {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
@@ -67,7 +107,6 @@ export default function Statistics() {
                     : "bg-white border-gray-200 hover:border-blue-300 shadow-sm hover:shadow-lg"
                 }`}
               >
-                {/* Glow Effect */}
                 {theme === "dark" && (
                   <div
                     className="absolute -inset-0.5 rounded-2xl opacity-0 group-hover:opacity-30 blur-xl transition-opacity"
@@ -76,18 +115,21 @@ export default function Statistics() {
                 )}
 
                 <div className="relative z-10 text-center">
-                  {/* Icon */}
                   <div className="flex justify-center mb-4">
                     <div
                       className={`p-3 rounded-xl ${
-                        theme === "dark" ? "bg-white/10" : "bg-gray-100"
+                        theme === "dark"
+                          ? "bg-white/10"
+                          : "bg-gray-100"
                       }`}
                     >
-                      <stat.icon size={28} style={{ color: stat.color }} />
+                      <stat.icon
+                        size={28}
+                        style={{ color: stat.color }}
+                      />
                     </div>
                   </div>
 
-                  {/* Value */}
                   <h3
                     className="text-3xl sm:text-4xl font-bold mb-2"
                     style={{ color: stat.color }}
@@ -95,10 +137,11 @@ export default function Statistics() {
                     {stat.value}
                   </h3>
 
-                  {/* Label */}
                   <p
                     className={`text-sm sm:text-base ${
-                      theme === "dark" ? "text-gray-400" : "text-gray-600"
+                      theme === "dark"
+                        ? "text-gray-400"
+                        : "text-gray-600"
                     }`}
                   >
                     {stat.label}
@@ -127,7 +170,6 @@ export default function Statistics() {
                 : "bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-500 hover:to-blue-600"
             }`}
           >
-            {/* Glow Effect */}
             {theme === "dark" && (
               <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
             )}
