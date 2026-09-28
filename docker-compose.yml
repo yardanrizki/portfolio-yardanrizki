@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16
+    container_name: portfolio-yardanrizki-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: portfolio_yardanrizki
+      POSTGRES_USER: portfolio_user
+      POSTGRES_PASSWORD: portfolio_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - portfolio_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  portfolio_postgres_data:

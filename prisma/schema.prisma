@@ -1,0 +1,544 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// USER / ADMIN
+// ============================================================
+
+model User {
+  id           String @id @default(uuid())
+  email        String @unique
+  username     String @unique
+  passwordHash String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  personalInfo PersonalInfo?
+  profiles     Profile[]
+
+  experiences  Experience[]
+  projects     Project[]
+  education    Education[]
+  certificates Certificate[]
+  trainings    Training[]
+  skills       Skill[]
+  languages    SpokenLanguage[]
+  publications Publication[]
+}
+
+// ============================================================
+// PERSONAL INFORMATION
+// ============================================================
+
+model PersonalInfo {
+  id String @id @default(uuid())
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  fullName String
+
+  email    String?
+  phone    String?
+  location String?
+
+  headlineEn String?
+  headlineId String?
+
+  summaryEn String?
+  summaryId String?
+
+  photoUrl String?
+
+  portfolioUrl String?
+  linkedinUrl  String?
+  githubUrl    String?
+  otherUrl     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================================
+// PROFILE
+// ============================================================
+
+enum ProfileType {
+  GENERAL
+  ROLE
+  DOMAIN
+}
+
+model Profile {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  slug String @unique
+
+  name String
+
+  type ProfileType @default(GENERAL)
+
+  roleLabel String?
+
+  headlineEn String?
+  headlineId String?
+
+  summaryEn String?
+  summaryId String?
+
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  experiences  ProfileExperience[]
+  projects     ProfileProject[]
+  certificates ProfileCertificate[]
+  trainings    ProfileTraining[]
+  skills       ProfileSkill[]
+}
+
+// ============================================================
+// EXPERIENCE
+// ============================================================
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+  FREELANCE
+  VOLUNTEER
+  ORGANIZATION
+  OTHER
+}
+
+model Experience {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  companyName String
+  location    String?
+
+  roleTitleEn String?
+  roleTitleId String?
+
+  employmentType EmploymentType?
+
+  startDate DateTime
+  endDate   DateTime?
+  isCurrent Boolean   @default(false)
+
+  descriptionEn String?
+  descriptionId String?
+
+  responsibilities Json?
+  achievements     Json?
+
+  logoUrl    String?
+  websiteUrl String?
+
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profiles ProfileExperience[]
+}
+
+// ============================================================
+// PROJECT
+// ============================================================
+
+enum ProjectStatus {
+  PLANNING
+  IN_PROGRESS
+  COMPLETED
+  MAINTENANCE
+  ARCHIVED
+}
+
+model Project {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  titleEn String
+  titleId String?
+
+  shortDescriptionEn String?
+  shortDescriptionId String?
+
+  longDescriptionEn String?
+  longDescriptionId String?
+
+  techStack String[]
+
+  roleInProject String?
+
+  status ProjectStatus @default(COMPLETED)
+
+  githubUrl    String?
+  demoUrl      String?
+  caseStudyUrl String?
+
+  coverImageUrl String?
+  imageUrls     String[]
+
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profiles ProfileProject[]
+}
+
+// ============================================================
+// EDUCATION
+// ============================================================
+
+model Education {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  institution String
+
+  degree       String?
+  fieldOfStudy String?
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  gpa   String?
+  notes String?
+
+  logoUrl String?
+
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================================
+// CERTIFICATE
+// ============================================================
+
+enum CertificateType {
+  CERTIFICATION
+  COURSE
+  TRAINING
+  AWARD
+  OTHER
+}
+
+model Certificate {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  titleEn String
+  titleId String?
+
+  issuerEn String?
+  issuerId String?
+
+  issuedDate DateTime?
+  expiryDate DateTime?
+
+  credentialId String?
+  verifyUrl    String?
+
+  type CertificateType @default(CERTIFICATION)
+
+  coverImageUrl String?
+
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profiles ProfileCertificate[]
+}
+
+// ============================================================
+// TRAINING
+// ============================================================
+
+model Training {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  titleEn String
+  titleId String?
+
+  providerEn String?
+  providerId String?
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  durationHours Int?
+
+  certificateUrl String?
+  verifyUrl      String?
+
+  coverImageUrl String?
+
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profiles ProfileTraining[]
+}
+
+// ============================================================
+// Publications
+// ============================================================
+
+enum PublicationType {
+  JOURNAL
+  CONFERENCE
+  OTHER
+}
+
+model Publication {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title           String
+  publisher       String?
+  publicationType PublicationType @default(OTHER)
+
+  publishedDate DateTime?
+  accreditation String?
+
+  descriptionEn String?
+  descriptionId String?
+
+  url String?
+  doi String?
+
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================================
+// SKILL
+// ============================================================
+
+enum SkillCategory {
+  WEB_DEVELOPMENT
+  MOBILE_DEVELOPMENT
+  IOT
+  DATA_SCIENCE
+  AI_MACHINE_LEARNING
+  DATABASE
+  CLOUD_DEVOPS
+  DESIGN
+  VIDEO_EDITING
+  PRODUCTIVITY
+  SOFT_SKILLS
+  OTHER
+}
+
+model Skill {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name String
+
+  category SkillCategory @default(OTHER)
+
+  iconName String?
+  iconUrl  String?
+
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profiles ProfileSkill[]
+}
+
+// ============================================================
+// SPOKEN LANGUAGE
+// ============================================================
+
+model SpokenLanguage {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  languageName String
+  proficiency  String?
+
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================================
+// PROFILE ↔ EXPERIENCE
+// ============================================================
+
+model ProfileExperience {
+  id String @id @default(uuid())
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  experienceId String
+  experience   Experience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+
+  isIncluded Boolean @default(true)
+
+  sortOrder Int @default(0)
+
+  @@unique([profileId, experienceId])
+}
+
+// ============================================================
+// PROFILE ↔ PROJECT
+// ============================================================
+
+model ProfileProject {
+  id String @id @default(uuid())
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  isFeatured Boolean @default(false)
+  isIncluded Boolean @default(true)
+
+  sortOrder Int @default(0)
+
+  @@unique([profileId, projectId])
+}
+
+// ============================================================
+// PROFILE ↔ CERTIFICATE
+// ============================================================
+
+model ProfileCertificate {
+  id String @id @default(uuid())
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  certificateId String
+  certificate   Certificate @relation(fields: [certificateId], references: [id], onDelete: Cascade)
+
+  isIncluded Boolean @default(true)
+
+  sortOrder Int @default(0)
+
+  @@unique([profileId, certificateId])
+}
+
+// ============================================================
+// PROFILE ↔ TRAINING
+// ============================================================
+
+model ProfileTraining {
+  id String @id @default(uuid())
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  trainingId String
+  training   Training @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+
+  isIncluded Boolean @default(true)
+
+  sortOrder Int @default(0)
+
+  @@unique([profileId, trainingId])
+}
+
+// ============================================================
+// PROFILE ↔ SKILL
+// ============================================================
+
+model ProfileSkill {
+  id String @id @default(uuid())
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  skillId String
+  skill   Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  isHighlighted Boolean @default(false)
+  isIncluded    Boolean @default(true)
+
+  sortOrder Int @default(0)
+
+  @@unique([profileId, skillId])
+}
+
+// ============================================================
+// CONTACT MESSAGE
+// ============================================================
+
+model ContactMessage {
+  id String @id @default(uuid())
+
+  name  String
+  email String
+  phone String?
+
+  subject String?
+  message String
+
+  page String?
+
+  isRead Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
